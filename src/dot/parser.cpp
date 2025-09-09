@@ -124,7 +124,22 @@ std::shared_ptr<Subgraph> DotParser::parse_subgraph() {
     
     // Parse subgraph body (similar to graph body)
     while (current_token_.type != TokenType::RCURLY && current_token_.type != TokenType::EOF_TOKEN) {
-        if (current_token_.type == TokenType::SUBGRAPH) {
+        if (current_token_.type == TokenType::NODE) {
+            // Node attribute statement
+            advance();
+            auto attrs = parse_attributes();
+            subgraph->attributes.insert(subgraph->attributes.end(), attrs.begin(), attrs.end());
+        } else if (current_token_.type == TokenType::EDGE) {
+            // Edge attribute statement
+            advance();
+            auto attrs = parse_attributes();
+            subgraph->attributes.insert(subgraph->attributes.end(), attrs.begin(), attrs.end());
+        } else if (current_token_.type == TokenType::GRAPH) {
+            // Graph attribute statement
+            advance();
+            auto attrs = parse_attributes();
+            subgraph->attributes.insert(subgraph->attributes.end(), attrs.begin(), attrs.end());
+        } else if (current_token_.type == TokenType::SUBGRAPH) {
             auto nested_subgraph = parse_subgraph();
             subgraph->subgraphs.push_back(nested_subgraph);
         } else if (current_token_.type == TokenType::ID || current_token_.type == TokenType::STR_ID) {
@@ -133,6 +148,11 @@ std::shared_ptr<Subgraph> DotParser::parse_subgraph() {
             if (current_token_.type == TokenType::EDGE_OP) {
                 auto edge = parse_edge(id);
                 subgraph->edges.push_back(edge);
+            } else if (current_token_.type == TokenType::EQUAL) {
+                // Subgraph attribute assignment: ID = ID
+                advance(); // consume '='
+                std::string value = parse_id();
+                subgraph->attributes.push_back({id, value});
             } else {
                 auto node = std::make_shared<Node>(id);
                 if (current_token_.type == TokenType::LSQUARE) {
