@@ -1,0 +1,52 @@
+digraph ShapesTest {
+    rankdir=LR;
+    
+    // Test all different node shapes
+    box_node [shape=box, label="Box Shape", fillcolor=lightblue, style=filled];
+    circle_node [shape=circle, label="Circle", fillcolor=lightgreen, style=filled];
+    ellipse_node [shape=ellipse, label="Ellipse Shape", fillcolor=lightyellow, style=filled];
+    diamond_node [shape=diamond, label="Diamond", fillcolor=lightpink, style=filled];
+    triangle_node [shape=triangle, label="Triangle", fillcolor=lightcyan, style=filled];
+    invtriangle_node [shape=invtriangle, label="Inv Triangle", fillcolor=lightgray, style=filled];
+    trapezium_node [shape=trapezium, label="Trapezium", fillcolor=orange, style=filled];
+    invtrapezium_node [shape=invtrapezium, label="Inv Trapezium", fillcolor=violet, style=filled];
+    parallelogram_node [shape=parallelogram, label="Parallelogram", fillcolor=gold, style=filled];
+    house_node [shape=house, label="House", fillcolor=lightcoral, style=filled];
+    invhouse_node [shape=invhouse, label="Inv House", fillcolor=lightsteelblue, style=filled];
+    pentagon_node [shape=pentagon, label="Pentagon", fillcolor=lightseagreen, style=filled];
+    hexagon_node [shape=hexagon, label="Hexagon", fillcolor=lightsalmon, style=filled];
+    octagon_node [shape=octagon, label="Octagon", fillcolor=lightslategray, style=filled];
+    
+    // Record shapes
+    record_node [shape=record, label="{Record|{Left|Right}}", fillcolor=wheat, style=filled];
+    mrecord_node [shape=Mrecord, label="{MRecord|{A|B|C}}", fillcolor=thistle, style=filled];
+    
+    // Special shapes
+    point_node [shape=point, fillcolor=red, style=filled];
+    plaintext_node [shape=plaintext, label="Plain Text Node"];
+    
+    // Test different edge styles
+    box_node -> circle_node [style=solid, color=black, label="solid"];
+    circle_node -> ellipse_node [style=dashed, color=red, label="dashed"];
+    ellipse_node -> diamond_node [style=dotted, color=blue, label="dotted"];
+    diamond_node -> triangle_node [style=bold, color=green, label="bold"];
+    triangle_node -> invtriangle_node [style=invis];
+    
+    // Test different arrow types
+    trapezium_node -> invtrapezium_node [arrowhead=normal, color=purple];
+    invtrapezium_node -> parallelogram_node [arrowhead=dot, color=brown];
+    parallelogram_node -> house_node [arrowhead=odot, color=darkgreen];
+    house_node -> invhouse_node [arrowhead=none, color=darkblue];
+    invhouse_node -> pentagon_node [arrowhead=diamond, color=darkorange];
+    pentagon_node -> hexagon_node [arrowhead=box, color=darkred];
+    hexagon_node -> octagon_node [arrowhead=crow, color=darkviolet];
+    
+    // Connect records
+    record_node -> mrecord_node [color=gray];
+    mrecord_node -> point_node [color=black];
+    point_node -> plaintext_node [color=darkgray];
+    
+    // Create some cycles for complexity
+    octagon_node -> box_node [style=dashed, color=lightgray, constraint=false];
+    plaintext_node -> circle_node [style=dotted, color=lightblue, constraint=false];
+}

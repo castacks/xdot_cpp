@@ -1,0 +1,94 @@
+digraph LargeGraph {
+    rankdir=TB;
+    node [shape=box, style=filled, fillcolor=lightblue];
+    edge [color=darkblue];
+    
+    // Create a large graph with many nodes and edges
+    subgraph cluster_layer1 {
+        label="Layer 1 - Input";
+        style=filled;
+        color=lightgray;
+        
+        n1_1 [label="Input 1"];
+        n1_2 [label="Input 2"];
+        n1_3 [label="Input 3"];
+        n1_4 [label="Input 4"];
+        n1_5 [label="Input 5"];
+        n1_6 [label="Input 6"];
+        n1_7 [label="Input 7"];
+        n1_8 [label="Input 8"];
+        n1_9 [label="Input 9"];
+        n1_10 [label="Input 10"];
+    }
+    
+    subgraph cluster_layer2 {
+        label="Layer 2 - Processing";
+        style=filled;
+        color=lightcyan;
+        
+        n2_1 [label="Process A", fillcolor=yellow];
+        n2_2 [label="Process B", fillcolor=yellow];
+        n2_3 [label="Process C", fillcolor=yellow];
+        n2_4 [label="Process D", fillcolor=yellow];
+        n2_5 [label="Process E", fillcolor=yellow];
+        n2_6 [label="Process F", fillcolor=yellow];
+        n2_7 [label="Process G", fillcolor=yellow];
+        n2_8 [label="Process H", fillcolor=yellow];
+    }
+    
+    subgraph cluster_layer3 {
+        label="Layer 3 - Analysis";
+        style=filled;
+        color=lightgreen;
+        
+        n3_1 [label="Analyze X", fillcolor=orange];
+        n3_2 [label="Analyze Y", fillcolor=orange];
+        n3_3 [label="Analyze Z", fillcolor=orange];
+        n3_4 [label="Analyze W", fillcolor=orange];
+        n3_5 [label="Analyze V", fillcolor=orange];
+    }
+    
+    subgraph cluster_layer4 {
+        label="Layer 4 - Output";
+        style=filled;
+        color=lightpink;
+        
+        n4_1 [label="Output 1", fillcolor=red];
+        n4_2 [label="Output 2", fillcolor=red];
+        n4_3 [label="Output 3", fillcolor=red];
+    }
+    
+    // Layer 1 to Layer 2 connections
+    n1_1 -> n2_1; n1_1 -> n2_2;
+    n1_2 -> n2_1; n1_2 -> n2_3;
+    n1_3 -> n2_2; n1_3 -> n2_4;
+    n1_4 -> n2_3; n1_4 -> n2_5;
+    n1_5 -> n2_4; n1_5 -> n2_6;
+    n1_6 -> n2_5; n1_6 -> n2_7;
+    n1_7 -> n2_6; n1_7 -> n2_8;
+    n1_8 -> n2_7; n1_8 -> n2_1;
+    n1_9 -> n2_8; n1_9 -> n2_2;
+    n1_10 -> n2_1; n1_10 -> n2_8;
+    
+    // Layer 2 to Layer 3 connections
+    n2_1 -> n3_1; n2_1 -> n3_2;
+    n2_2 -> n3_1; n2_2 -> n3_3;
+    n2_3 -> n3_2; n2_3 -> n3_4;
+    n2_4 -> n3_3; n2_4 -> n3_5;
+    n2_5 -> n3_4; n2_5 -> n3_1;
+    n2_6 -> n3_5; n2_6 -> n3_2;
+    n2_7 -> n3_1; n2_7 -> n3_3;
+    n2_8 -> n3_2; n2_8 -> n3_4;
+    
+    // Layer 3 to Layer 4 connections
+    n3_1 -> n4_1; n3_1 -> n4_2;
+    n3_2 -> n4_1; n3_2 -> n4_3;
+    n3_3 -> n4_2; n3_3 -> n4_3;
+    n3_4 -> n4_1; n3_4 -> n4_3;
+    n3_5 -> n4_2; n3_5 -> n4_1;
+    
+    // Some cross-layer connections for complexity
+    n1_5 -> n3_2 [style=dashed, color=red, label="bypass"];
+    n2_3 -> n4_1 [style=dashed, color=green, label="direct"];
+    n1_8 -> n4_3 [style=dotted, color=purple, label="shortcut"];
+}

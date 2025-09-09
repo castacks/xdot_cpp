@@ -1,0 +1,90 @@
+digraph EdgeCases {
+    // Test various edge cases and unusual DOT syntax
+    
+    // Empty labels
+    empty_label [label=""];
+    
+    // Very long labels
+    long_label [label="This is a very long label that should test how the renderer handles text wrapping and long strings that might exceed normal display boundaries"];
+    
+    // Labels with special characters and escapes
+    escaped [label="Line 1\nLine 2\tTabbed\r\nWindows newline"];
+    quotes [label="\"Quoted text\" and 'single quotes'"];
+    backslashes [label="Path\\to\\file and \\n \\t \\r"];
+    
+    // HTML-like labels
+    html_label [label=<<B>Bold</B> and <I>Italic</I> and <U>Underlined</U>>];
+    
+    // Numeric node IDs
+    123 [label="Numeric ID"];
+    456.789 [label="Float ID"];
+    
+    // Node IDs with special characters (quoted)
+    "node with spaces" [label="Spaces in ID"];
+    "node-with-dashes" [label="Dashes in ID"];
+    "node_with_underscores" [label="Underscores in ID"];
+    
+    // Attributes with various value types
+    attr_test [
+        label="Attribute Test",
+        color="#FF5733",
+        fillcolor="rgb(255,87,51)",
+        penwidth=3.5,
+        fontsize=14,
+        fontname="Arial Bold",
+        style="filled,rounded,bold"
+    ];
+    
+    // Multiple edges between same nodes
+    multi_edge_a [label="Multi A"];
+    multi_edge_b [label="Multi B"];
+    multi_edge_a -> multi_edge_b [label="Edge 1", color=red];
+    multi_edge_a -> multi_edge_b [label="Edge 2", color=blue];
+    multi_edge_a -> multi_edge_b [label="Edge 3", color=green];
+    
+    // Self-loops
+    self_loop [label="Self Loop"];
+    self_loop -> self_loop [label="loop"];
+    
+    // Edges with no labels
+    no_label_a [label="No Label A"];
+    no_label_b [label="No Label B"];
+    no_label_a -> no_label_b;
+    
+    // Complex edge paths
+    path_a [label="Path A"];
+    path_b [label="Path B"];
+    path_c [label="Path C"];
+    path_d [label="Path D"];
+    path_a -> path_b -> path_c -> path_d;
+    
+    // Bidirectional edges
+    bi_a [label="Bi A"];
+    bi_b [label="Bi B"];
+    bi_a -> bi_b [dir=both, label="bidirectional"];
+    
+    // Invisible edges
+    invis_a [label="Invisible A"];
+    invis_b [label="Invisible B"];
+    invis_a -> invis_b [style=invis];
+    
+    // Connect various test nodes
+    empty_label -> long_label;
+    long_label -> escaped;
+    escaped -> quotes;
+    quotes -> backslashes;
+    backslashes -> html_label;
+    html_label -> 123;
+    123 -> 456.789;
+    456.789 -> "node with spaces";
+    "node with spaces" -> "node-with-dashes";
+    "node-with-dashes" -> "node_with_underscores";
+    "node_with_underscores" -> attr_test;
+    attr_test -> multi_edge_a;
+    multi_edge_b -> self_loop;
+    self_loop -> no_label_a;
+    no_label_b -> path_a;
+    path_d -> bi_a;
+    bi_b -> invis_a;
+    invis_b -> empty_label [constraint=false, style=dotted];
+}

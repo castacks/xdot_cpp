@@ -1,0 +1,118 @@
+digraph NestedSubgraphs {
+    rankdir=TB;
+    compound=true;
+    
+    subgraph cluster_main {
+        label="Main System";
+        style=filled;
+        color=lightgray;
+        
+        subgraph cluster_frontend {
+            label="Frontend Layer";
+            style=filled;
+            color=lightblue;
+            
+            subgraph cluster_ui {
+                label="UI Components";
+                style=filled;
+                color=lightcyan;
+                
+                ui_login [label="Login Form"];
+                ui_dashboard [label="Dashboard"];
+                ui_settings [label="Settings"];
+                
+                ui_login -> ui_dashboard;
+                ui_dashboard -> ui_settings;
+            }
+            
+            subgraph cluster_api_client {
+                label="API Client";
+                style=filled;
+                color=lightyellow;
+                
+                api_auth [label="Auth Client"];
+                api_data [label="Data Client"];
+                api_config [label="Config Client"];
+                
+                api_auth -> api_data;
+                api_data -> api_config;
+            }
+            
+            ui_login -> api_auth [ltail=cluster_ui, lhead=cluster_api_client];
+        }
+        
+        subgraph cluster_backend {
+            label="Backend Layer";
+            style=filled;
+            color=lightgreen;
+            
+            subgraph cluster_services {
+                label="Microservices";
+                style=filled;
+                color=lightpink;
+                
+                service_auth [label="Auth Service"];
+                service_user [label="User Service"];
+                service_data [label="Data Service"];
+                service_notification [label="Notification Service"];
+                
+                service_auth -> service_user;
+                service_user -> service_data;
+                service_data -> service_notification;
+            }
+            
+            subgraph cluster_database {
+                label="Database Layer";
+                style=filled;
+                color=lightsalmon;
+                
+                subgraph cluster_primary_db {
+                    label="Primary Database";
+                    style=filled;
+                    color=wheat;
+                    
+                    db_users [label="Users DB"];
+                    db_sessions [label="Sessions DB"];
+                    db_audit [label="Audit DB"];
+                    
+                    db_users -> db_sessions;
+                    db_sessions -> db_audit;
+                }
+                
+                subgraph cluster_cache {
+                    label="Cache Layer";
+                    style=filled;
+                    color=thistle;
+                    
+                    cache_redis [label="Redis Cache"];
+                    cache_memcached [label="Memcached"];
+                    
+                    cache_redis -> cache_memcached;
+                }
+                
+                db_users -> cache_redis [ltail=cluster_primary_db, lhead=cluster_cache];
+            }
+            
+            service_auth -> db_users [ltail=cluster_services, lhead=cluster_database];
+        }
+        
+        api_auth -> service_auth [ltail=cluster_frontend, lhead=cluster_backend];
+    }
+    
+    subgraph cluster_external {
+        label="External Systems";
+        style=filled;
+        color=lightsteelblue;
+        
+        ext_payment [label="Payment Gateway"];
+        ext_email [label="Email Service"];
+        ext_analytics [label="Analytics"];
+        
+        ext_payment -> ext_email;
+        ext_email -> ext_analytics;
+    }
+    
+    // Cross-cluster connections
+    service_notification -> ext_email [ltail=cluster_main, lhead=cluster_external];
+    ext_analytics -> ui_dashboard [constraint=false, style=dashed, color=red];
+}

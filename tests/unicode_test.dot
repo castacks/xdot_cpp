@@ -1,0 +1,38 @@
+digraph UnicodeTest {
+    rankdir=LR;
+    node [shape=box, style=filled];
+    
+    // Test Unicode characters in labels
+    chinese [label="中文测试", fillcolor=lightblue];
+    japanese [label="日本語テスト", fillcolor=lightgreen];
+    korean [label="한국어 테스트", fillcolor=lightyellow];
+    arabic [label="اختبار عربي", fillcolor=lightpink];
+    russian [label="Русский тест", fillcolor=lightcyan];
+    greek [label="Ελληνική δοκιμή", fillcolor=lightgray];
+    
+    // Mathematical symbols
+    math [label="∑∫∂∆∇∞±≤≥≠≈", fillcolor=orange];
+    
+    // Emoji and symbols
+    emoji [label="🚀🌟💻🔧⚡🎯", fillcolor=violet];
+    
+    // Special characters
+    special [label="©®™€£¥§¶†‡•…", fillcolor=gold];
+    
+    // Accented characters
+    accented [label="café naïve résumé", fillcolor=lightcoral];
+    
+    // Connect them
+    chinese -> japanese [label="→"];
+    japanese -> korean [label="⇒"];
+    korean -> arabic [label="⟶"];
+    arabic -> russian [label="↦"];
+    russian -> greek [label="⤷"];
+    greek -> math [label="∴"];
+    math -> emoji [label="✓"];
+    emoji -> special [label="★"];
+    special -> accented [label="♦"];
+    
+    // Create a cycle
+    accented -> chinese [label="⟲", style=dashed];
+}

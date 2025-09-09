@@ -1,0 +1,45 @@
+graph UndirectedGraph {
+    // Test undirected graph (using 'graph' instead of 'digraph')
+    
+    node [shape=circle, style=filled, fillcolor=lightblue];
+    edge [color=darkblue];
+    
+    // Simple undirected connections
+    A -- B [label="connection"];
+    B -- C [label="link"];
+    C -- D [label="bond"];
+    D -- A [label="tie"];
+    
+    // Create a more complex undirected network
+    E [fillcolor=lightgreen];
+    F [fillcolor=lightgreen];
+    G [fillcolor=lightgreen];
+    H [fillcolor=lightgreen];
+    
+    E -- F -- G -- H -- E;
+    
+    // Connect the two components
+    B -- F [style=dashed, color=red, label="bridge"];
+    
+    // Add some isolated nodes and connect them
+    I [fillcolor=yellow];
+    J [fillcolor=yellow];
+    K [fillcolor=yellow];
+    
+    I -- J -- K;
+    
+    // Connect to main graph
+    A -- I [style=dotted, color=green];
+    
+    // Test different edge styles in undirected graph
+    L [fillcolor=orange];
+    M [fillcolor=orange];
+    N [fillcolor=orange];
+    
+    L -- M [style=bold, color=purple];
+    M -- N [style=dashed, color=brown];
+    N -- L [style=dotted, color=darkgreen];
+    
+    // Connect to main network
+    G -- L [color=gray];
+}
