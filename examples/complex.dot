@@ -1,0 +1,40 @@
+digraph ComplexGraph {
+    rankdir=TB;
+    node [shape=record, style=filled];
+    
+    subgraph cluster_0 {
+        label="Cluster 1";
+        style=filled;
+        color=lightgrey;
+        
+        a0 [label="Process A", fillcolor=lightblue];
+        a1 [label="Process B", fillcolor=lightblue];
+        a2 [label="Process C", fillcolor=lightblue];
+        
+        a0 -> a1 -> a2;
+    }
+    
+    subgraph cluster_1 {
+        label="Cluster 2";
+        style=filled;
+        color=lightcyan;
+        
+        b0 [label="Service X", fillcolor=lightgreen];
+        b1 [label="Service Y", fillcolor=lightgreen];
+        b2 [label="Service Z", fillcolor=lightgreen];
+        
+        b0 -> b1;
+        b1 -> b2;
+        b2 -> b0;
+    }
+    
+    start [label="Start", shape=ellipse, fillcolor=yellow];
+    end [label="End", shape=ellipse, fillcolor=red];
+    
+    start -> a0;
+    start -> b0;
+    a2 -> end;
+    b2 -> end;
+    
+    a1 -> b1 [style=dashed, color=red, label="cross-cluster"];
+}

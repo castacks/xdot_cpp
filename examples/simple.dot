@@ -1,0 +1,13 @@
+digraph G {
+    rankdir=LR;
+    
+    A [label="Node A", shape=box, style=filled, fillcolor=lightblue];
+    B [label="Node B", shape=ellipse, style=filled, fillcolor=lightgreen];
+    C [label="Node C", shape=diamond, style=filled, fillcolor=lightyellow];
+    D [label="Node D", shape=box, style=filled, fillcolor=lightcoral];
+    
+    A -> B [label="edge 1", color=blue];
+    B -> C [label="edge 2", color=red];
+    C -> D [label="edge 3", color=green];
+    A -> D [label="direct", style=dashed, color=purple];
+}
