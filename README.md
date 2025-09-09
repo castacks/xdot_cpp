@@ -61,6 +61,9 @@ make install
 # Use specific Graphviz filter
 ./xdot_viewer -f neato examples/complex.dot
 ```
+![examples/simple.dot](simple_dot.png "examples/simple.dot")
+![examples/complex.dot](complex_dot.png "examples/complex.dot")
+
 
 ### Keyboard Shortcuts
 
