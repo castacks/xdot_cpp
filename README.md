@@ -53,13 +53,13 @@ make install
 
 ```bash
 # Launch with no file
-./xdot_cpp
+./xdot_viewer
 
 # Open a specific file
-./xdot_cpp examples/simple.dot
+./xdot_viewer examples/simple.dot
 
 # Use specific Graphviz filter
-./xdot_cpp -f neato examples/complex.dot
+./xdot_viewer -f neato examples/complex.dot
 ```
 
 ### Keyboard Shortcuts
