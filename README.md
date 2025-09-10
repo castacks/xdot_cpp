@@ -17,7 +17,7 @@ A C++/Qt interactive viewer for graphs written in Graphviz's DOT language, based
 ### Prerequisites
 
 - C++17 compatible compiler (GCC 7+, Clang 5+, MSVC 2017+)
-- Qt6 (Core, Widgets, Gui modules)
+- Qt5 (Core, Widgets, Gui modules)
 - CMake 3.16+
 - Optional: Graphviz (for processing .dot files)
 

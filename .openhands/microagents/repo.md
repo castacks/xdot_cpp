@@ -14,12 +14,12 @@ The project enables:
 
 ### Build System
 - **CMake 3.16+** with C++17 standard
-- **Qt6** framework (Core, Widgets, Gui modules)
+- **Qt5** framework (Core, Widgets, Gui modules)
 - **Graphviz** system dependency for DOT processing
 - Produces static libraries (`libxdot_core.a`, `libxdot_qt.a`) and executable (`xdot_viewer`)
 
 ### Dependencies
-- Qt6 for GUI rendering and event handling
+- Qt5 for GUI rendering and event handling
 - Graphviz for DOT file processing and layout generation
 - C++17 STL for modern C++ features
 

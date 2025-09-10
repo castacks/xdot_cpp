@@ -4,8 +4,8 @@ project(xdot_cpp VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find Qt6 components
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
+# Find Qt5 components
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Gui)
 
 # Enable Qt MOC
 set(CMAKE_AUTOMOC ON)
@@ -55,7 +55,7 @@ target_include_directories(xdot_core PUBLIC include)
 
 # Create the Qt widget library
 add_library(xdot_qt STATIC ${XDOT_WIDGET_SOURCES} ${XDOT_WIDGET_HEADERS})
-target_link_libraries(xdot_qt PUBLIC xdot_core Qt6::Core Qt6::Widgets Qt6::Gui)
+target_link_libraries(xdot_qt PUBLIC xdot_core Qt5::Core Qt5::Widgets Qt5::Gui)
 target_include_directories(xdot_qt PUBLIC include)
 
 # Create the viewer application
