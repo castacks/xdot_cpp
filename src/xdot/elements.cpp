@@ -207,13 +207,16 @@ TextShape::TextShape(const Point& position, const std::string& text, const Pen& 
 }
 
 BoundingBox TextShape::bounding_box() const {
-    // Rough estimation based on font size
-    double char_width = pen_.font_size * 0.6;
-    double text_width = text_.length() * char_width;
+    // Simple text bounding box estimation
+    double text_width = text_.length() * pen_.font_size * 0.6;
     double text_height = pen_.font_size;
     
-    return BoundingBox(position_.x, position_.y - text_height,
-                       position_.x + text_width, position_.y);
+    // Center the bounding box around the position
+    double half_width = text_width / 2.0;
+    double half_height = text_height / 2.0;
+    
+    return BoundingBox(position_.x - half_width, position_.y - half_height,
+                       position_.x + half_width, position_.y + half_height);
 }
 
 bool TextShape::contains_point(const Point& p) const {

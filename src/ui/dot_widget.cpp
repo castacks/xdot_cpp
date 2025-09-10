@@ -76,9 +76,19 @@ void QtRenderer::draw_bezier(const std::vector<xdot::Point>& control_points, con
 
 void QtRenderer::draw_text(const xdot::Point& position, const std::string& text, const xdot::Pen& pen) {
     painter_->setPen(create_qpen(pen));
-    painter_->setFont(create_qfont(pen));
+    QFont font = create_qfont(pen);
+    painter_->setFont(font);
     
-    painter_->drawText(QPointF(position.x, position.y), QString::fromStdString(text));
+    QString qtext = QString::fromStdString(text);
+    QFontMetrics metrics(font);
+    QRect text_rect = metrics.boundingRect(qtext);
+    
+    // Calculate centered position
+    // position is the center point, so we need to offset by half the text dimensions
+    double centered_x = position.x - text_rect.width() / 2.0;
+    double centered_y = position.y + text_rect.height() / 2.0 - metrics.descent();
+    
+    painter_->drawText(QPointF(centered_x, centered_y), qtext);
 }
 
 void QtRenderer::draw_image(const xdot::Point& position, double width, double height, const std::string& path) {

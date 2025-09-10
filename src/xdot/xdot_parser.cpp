@@ -187,12 +187,38 @@ void XDotAttrParser::handle_ellipse() {
     double width = read_float();
     double height = read_float();
     
+    // Add buffer to ellipse dimensions to better accommodate text
+    const double buffer_factor = 2.8; // 280% larger
+    width *= buffer_factor;
+    height *= buffer_factor;
+    
     auto ellipse = std::make_shared<EllipseShape>(center, width, height, current_pen_);
     shapes_.push_back(ellipse);
 }
 
 void XDotAttrParser::handle_polygon() {
     std::vector<Point> points = read_polygon();
+    
+    // Add buffer to polygon by expanding it outward from its center
+    if (!points.empty()) {
+        // Calculate center point
+        double center_x = 0, center_y = 0;
+        for (const auto& point : points) {
+            center_x += point.x;
+            center_y += point.y;
+        }
+        center_x /= points.size();
+        center_y /= points.size();
+        
+        // Expand each point outward from center by buffer factor
+        const double buffer_factor = 1.5; // 50% larger
+        for (auto& point : points) {
+            double dx = point.x - center_x;
+            double dy = point.y - center_y;
+            point.x = center_x + dx * buffer_factor;
+            point.y = center_y + dy * buffer_factor;
+        }
+    }
     
     auto polygon = std::make_shared<PolygonShape>(points, current_pen_);
     shapes_.push_back(polygon);
