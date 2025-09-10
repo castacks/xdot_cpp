@@ -3,6 +3,7 @@ project(xdot_cpp VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Find Qt5 components
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets Gui)
@@ -13,7 +14,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 # Include directories
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Library sources
 set(XDOT_LIB_SOURCES
@@ -51,12 +52,18 @@ set(XDOT_WIDGET_HEADERS
 
 # Create the core library (without Qt dependencies)
 add_library(xdot_core STATIC ${XDOT_LIB_SOURCES} ${XDOT_LIB_HEADERS})
-target_include_directories(xdot_core PUBLIC include)
+target_include_directories(xdot_core PUBLIC 
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
 
 # Create the Qt widget library
 add_library(xdot_qt STATIC ${XDOT_WIDGET_SOURCES} ${XDOT_WIDGET_HEADERS})
 target_link_libraries(xdot_qt PUBLIC xdot_core Qt5::Core Qt5::Widgets Qt5::Gui)
-target_include_directories(xdot_qt PUBLIC include)
+target_include_directories(xdot_qt PUBLIC 
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
 
 # Create the viewer application
 add_executable(xdot_viewer src/main.cpp)
