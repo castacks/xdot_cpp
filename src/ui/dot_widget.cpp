@@ -167,8 +167,42 @@ void DotWidget::set_dot_code(const std::string& dot_code) {
             return;
         }
         
+        // Modify DOT code to account for coordinate system difference between Graphviz (Y up) and Qt (Y down)
+        std::string modified_dot_code = dot_code;
+        size_t rankdir_pos = modified_dot_code.find("rankdir");
+        
+        if (rankdir_pos != std::string::npos) {
+            // Find the value after rankdir=
+            size_t equals_pos = modified_dot_code.find('=', rankdir_pos);
+            if (equals_pos != std::string::npos) {
+                size_t value_start = equals_pos + 1;
+                // Skip whitespace
+                while (value_start < modified_dot_code.length() && std::isspace(modified_dot_code[value_start])) {
+                    value_start++;
+                }
+                
+                // Check if it's TB or BT and flip it
+                if (modified_dot_code.substr(value_start, 2) == "TB") {
+                    modified_dot_code.replace(value_start, 2, "BT");
+                    qDebug() << "Flipped rankdir from TB to BT";
+                } else if (modified_dot_code.substr(value_start, 2) == "BT") {
+                    modified_dot_code.replace(value_start, 2, "TB");
+                    qDebug() << "Flipped rankdir from BT to TB";
+                } else {
+                    qDebug() << "DOT code contains rankdir but not TB/BT (probably LR/RL)";
+                }
+            }
+        } else {
+            // No rankdir specified, inject BT for top-down layout
+            size_t brace_pos = modified_dot_code.find('{');
+            if (brace_pos != std::string::npos) {
+                modified_dot_code.insert(brace_pos + 1, "\n    rankdir=BT;");
+                qDebug() << "Injected rankdir=BT into DOT code";
+            }
+        }
+        
         QTextStream out(&file);
-        out << QString::fromStdString(dot_code);
+        out << QString::fromStdString(modified_dot_code);
         file.close();
         
         // Run dot to generate xdot format
