@@ -40,8 +40,12 @@ std::vector<std::shared_ptr<Shape>> XDotAttrParser::parse() {
         
         if (code == "E") {
             handle_ellipse();
+        } else if (code == "e") {
+            handle_ellipse_unfilled();
         } else if (code == "P") {
             handle_polygon();
+        } else if (code == "p") {
+            handle_polygon_unfilled();
         } else if (code == "L") {
             handle_polyline();
         } else if (code == "B") {
@@ -284,12 +288,63 @@ void XDotAttrParser::handle_color() {
 void XDotAttrParser::handle_fill_color() {
     Color fill_color = read_color();
     current_pen_.set_fill_color(fill_color);
+    current_pen_.set_filled(true);  // 'C' command indicates filled shape
 }
 
 void XDotAttrParser::handle_font() {
     double font_size = read_float();
     std::string font_name = read_text();
     current_pen_.set_font(font_name, font_size);
+}
+
+void XDotAttrParser::handle_ellipse_unfilled() {
+    Point center = read_point();
+    double width = read_float();
+    double height = read_float();
+    
+    // Apply same expansion as filled ellipses to properly encapsulate text
+    const double buffer_factor = 2.8; // 280% larger
+    width *= buffer_factor;
+    height *= buffer_factor;
+    
+    // Create a copy of current pen and mark it as unfilled
+    Pen unfilled_pen = current_pen_;
+    unfilled_pen.set_filled(false);
+    
+    auto ellipse = std::make_shared<EllipseShape>(center, width, height, unfilled_pen);
+    shapes_.push_back(ellipse);
+}
+
+void XDotAttrParser::handle_polygon_unfilled() {
+    std::vector<Point> points = read_polygon();
+    
+    // Add buffer to polygon by expanding it outward from its center
+    if (!points.empty()) {
+        // Calculate center point
+        Point center(0, 0);
+        for (const auto& point : points) {
+            center.x += point.x;
+            center.y += point.y;
+        }
+        center.x /= points.size();
+        center.y /= points.size();
+        
+        // Expand each point outward from center by buffer factor (same as filled shapes)
+        const double buffer_factor = 1.5; // 50% larger
+        for (auto& point : points) {
+            double dx = point.x - center.x;
+            double dy = point.y - center.y;
+            point.x = center.x + dx * buffer_factor;
+            point.y = center.y + dy * buffer_factor;
+        }
+    }
+    
+    // Create a copy of current pen and mark it as unfilled
+    Pen unfilled_pen = current_pen_;
+    unfilled_pen.set_filled(false);
+    
+    auto polygon = std::make_shared<PolygonShape>(points, unfilled_pen);
+    shapes_.push_back(polygon);
 }
 
 // XDotParser implementation

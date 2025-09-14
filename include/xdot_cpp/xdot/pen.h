@@ -21,9 +21,10 @@ struct Pen {
     std::vector<double> dash_pattern;
     std::string font_family;
     double font_size;
+    bool filled;
     
     Pen() : color(0, 0, 0), fill_color(1, 1, 1), line_width(1.0), 
-            line_style(LineStyle::SOLID), font_family("Arial"), font_size(12.0) {}
+            line_style(LineStyle::SOLID), font_family("Arial"), font_size(12.0), filled(false) {}
     
     void set_color(const Color& c) { color = c; }
     void set_fill_color(const Color& c) { fill_color = c; }
@@ -34,6 +35,7 @@ struct Pen {
         font_family = family; 
         font_size = size; 
     }
+    void set_filled(bool is_filled) { filled = is_filled; }
 };
 
 } // namespace xdot

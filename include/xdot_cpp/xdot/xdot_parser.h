@@ -37,7 +37,9 @@ private:
     Point transform(double x, double y) const;
     
     void handle_ellipse();
+    void handle_ellipse_unfilled();
     void handle_polygon();
+    void handle_polygon_unfilled();
     void handle_polyline();
     void handle_bezier();
     void handle_text();

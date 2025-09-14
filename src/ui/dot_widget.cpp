@@ -130,7 +130,11 @@ QPen QtRenderer::create_qpen(const xdot::Pen& pen) {
 }
 
 QBrush QtRenderer::create_qbrush(const xdot::Pen& pen) {
-    return QBrush(create_qcolor(pen.fill_color));
+    if (pen.filled) {
+        return QBrush(create_qcolor(pen.fill_color));
+    } else {
+        return QBrush(Qt::NoBrush);
+    }
 }
 
 QFont QtRenderer::create_qfont(const xdot::Pen& pen) {
@@ -214,6 +218,21 @@ void DotWidget::set_dot_code(const std::string& dot_code) {
             if (brace_pos != std::string::npos) {
                 modified_dot_code.insert(brace_pos + 1, "\n    rankdir=BT;");
                 qDebug() << "Injected rankdir=BT into DOT code";
+            }
+        }
+        
+        // Inject spacing parameters to prevent node overlapping
+        size_t brace_pos = modified_dot_code.find('{');
+        if (brace_pos != std::string::npos) {
+            // Check if nodesep already exists
+            if (modified_dot_code.find("nodesep") == std::string::npos) {
+                modified_dot_code.insert(brace_pos + 1, "\n    nodesep=0.8;");
+                qDebug() << "Injected nodesep=0.8 into DOT code";
+            }
+            // Check if ranksep already exists
+            if (modified_dot_code.find("ranksep") == std::string::npos) {
+                modified_dot_code.insert(brace_pos + 1, "\n    ranksep=0.8;");
+                qDebug() << "Injected ranksep=0.8 into DOT code";
             }
         }
         
