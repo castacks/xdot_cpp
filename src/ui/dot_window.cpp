@@ -395,7 +395,7 @@ std::string DotWindow::run_graphviz_filter(const std::string& dot_code, const st
     process.start(QString::fromStdString(filter), QStringList() << "-Txdot");
     
     if (!process.waitForStarted()) {
-        qDebug() << "Failed to start Graphviz process";
+        // qDebug() << "Failed to start Graphviz process";
         return "";
     }
     
@@ -403,13 +403,13 @@ std::string DotWindow::run_graphviz_filter(const std::string& dot_code, const st
     process.closeWriteChannel();
     
     if (!process.waitForFinished(10000)) { // 10 second timeout
-        qDebug() << "Graphviz process timed out";
+        // qDebug() << "Graphviz process timed out";
         process.kill();
         return "";
     }
     
     if (process.exitCode() != 0) {
-        qDebug() << "Graphviz process failed:" << process.readAllStandardError();
+        // qDebug() << "Graphviz process failed:" << process.readAllStandardError();
         return "";
     }
     

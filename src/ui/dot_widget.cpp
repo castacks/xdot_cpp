@@ -183,7 +183,7 @@ void DotWidget::set_dot_code(const std::string& dot_code) {
         QString temp_file = QDir::temp().filePath("xdot_temp.dot");
         QFile file(temp_file);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            qDebug() << "Failed to create temporary file";
+            // qDebug() << "Failed to create temporary file";
             return;
         }
         
@@ -204,12 +204,12 @@ void DotWidget::set_dot_code(const std::string& dot_code) {
                 // Check if it's TB or BT and flip it
                 if (modified_dot_code.substr(value_start, 2) == "TB") {
                     modified_dot_code.replace(value_start, 2, "BT");
-                    qDebug() << "Flipped rankdir from TB to BT";
+                    // qDebug() << "Flipped rankdir from TB to BT";
                 } else if (modified_dot_code.substr(value_start, 2) == "BT") {
                     modified_dot_code.replace(value_start, 2, "TB");
-                    qDebug() << "Flipped rankdir from BT to TB";
+                    // qDebug() << "Flipped rankdir from BT to TB";
                 } else {
-                    qDebug() << "DOT code contains rankdir but not TB/BT (probably LR/RL)";
+                    // qDebug() << "DOT code contains rankdir but not TB/BT (probably LR/RL)";
                 }
             }
         } else {
@@ -217,7 +217,7 @@ void DotWidget::set_dot_code(const std::string& dot_code) {
             size_t brace_pos = modified_dot_code.find('{');
             if (brace_pos != std::string::npos) {
                 modified_dot_code.insert(brace_pos + 1, "\n    rankdir=BT;");
-                qDebug() << "Injected rankdir=BT into DOT code";
+                // qDebug() << "Injected rankdir=BT into DOT code";
             }
         }
         
@@ -227,12 +227,12 @@ void DotWidget::set_dot_code(const std::string& dot_code) {
             // Check if nodesep already exists
             if (modified_dot_code.find("nodesep") == std::string::npos) {
                 modified_dot_code.insert(brace_pos + 1, "\n    nodesep=0.8;");
-                qDebug() << "Injected nodesep=0.8 into DOT code";
+                // qDebug() << "Injected nodesep=0.8 into DOT code";
             }
             // Check if ranksep already exists
             if (modified_dot_code.find("ranksep") == std::string::npos) {
                 modified_dot_code.insert(brace_pos + 1, "\n    ranksep=0.8;");
-                qDebug() << "Injected ranksep=0.8 into DOT code";
+                // qDebug() << "Injected ranksep=0.8 into DOT code";
             }
         }
         
@@ -246,7 +246,7 @@ void DotWidget::set_dot_code(const std::string& dot_code) {
         process.waitForFinished();
         
         if (process.exitCode() != 0) {
-            qDebug() << "Graphviz dot command failed:" << process.readAllStandardError();
+            // qDebug() << "Graphviz dot command failed:" << process.readAllStandardError();
             QFile::remove(temp_file);
             return;
         }
@@ -254,52 +254,52 @@ void DotWidget::set_dot_code(const std::string& dot_code) {
         QString xdot_output = process.readAllStandardOutput();
         QFile::remove(temp_file);
         
-        qDebug() << "Generated xdot format successfully";
-        qDebug() << "XDot output length:" << xdot_output.length();
+        // qDebug() << "Generated xdot format successfully";
+        // qDebug() << "XDot output length:" << xdot_output.length();
         
         // Parse the xdot format using the full parser
-        qDebug() << "About to parse xdot format...";
+        // qDebug() << "About to parse xdot format...";
         try {
             // First parse the DOT structure
             dot::DotParser dot_parser(xdot_output.toStdString());
             auto dot_graph = dot_parser.parse();
-            qDebug() << "Parsed DOT structure successfully";
+            // qDebug() << "Parsed DOT structure successfully";
             
             // Then parse the xdot drawing commands
             xdot::XDotParser xdot_parser(dot_graph);
             graph_ = xdot_parser.parse();
-            qDebug() << "Parsed xdot successfully";
+            // qDebug() << "Parsed xdot successfully";
             update_scene();
-            qDebug() << "Scene updated successfully.";
+            // qDebug() << "Scene updated successfully.";
         } catch (const std::exception& e) {
-            qDebug() << "Error parsing xdot:" << e.what();
+            // qDebug() << "Error parsing xdot:" << e.what();
         }
         
     } catch (const std::exception& e) {
-        qDebug() << "Error converting DOT to xdot:" << e.what();
+        // qDebug() << "Error converting DOT to xdot:" << e.what();
     }
 }
 
 void DotWidget::set_xdot_code(const std::string& xdot_code) {
     // Parse xdot code directly
     try {
-        qDebug() << "Starting xdot parsing...";
+        // qDebug() << "Starting xdot parsing...";
         xdot::XDotAttrParser parser(xdot_code);
-        qDebug() << "Created parser, about to parse...";
+        // qDebug() << "Created parser, about to parse...";
         auto shapes = parser.parse();
-        qDebug() << "Parsed" << shapes.size() << "shapes";
+        // qDebug() << "Parsed" << shapes.size() << "shapes";
         
         // Create a simple graph element with background shapes
         graph_ = std::make_shared<xdot::GraphElement>();
         for (auto& shape : shapes) {
             graph_->add_background_shape(shape);
         }
-        qDebug() << "Added shapes to graph, about to update scene...";
+        // qDebug() << "Added shapes to graph, about to update scene...";
         
         update_scene();
-        qDebug() << "Scene updated successfully.";
+        // qDebug() << "Scene updated successfully.";
     } catch (const std::exception& e) {
-        qDebug() << "Error parsing xdot code:" << e.what();
+        // qDebug() << "Error parsing xdot code:" << e.what();
     }
 }
 
@@ -470,17 +470,17 @@ void DotWidget::setup_scene() {
 }
 
 void DotWidget::render_graph() {
-    qDebug() << "render_graph() called";
+    // qDebug() << "render_graph() called";
     if (!graph_) {
-        qDebug() << "No graph to render";
+        // qDebug() << "No graph to render";
         return;
     }
     
-    qDebug() << "About to calculate bounding box...";
+    // qDebug() << "About to calculate bounding box...";
     xdot::BoundingBox bbox = graph_->bounding_box();
-    qDebug() << "Bounding box calculated:" << bbox.x1 << bbox.y1 << bbox.x2 << bbox.y2;
+    // qDebug() << "Bounding box calculated:" << bbox.x1 << bbox.y1 << bbox.x2 << bbox.y2;
     if (bbox.width() <= 0 || bbox.height() <= 0) {
-        qDebug() << "Invalid bounding box, returning";
+        // qDebug() << "Invalid bounding box, returning";
         return;
     }
     
@@ -508,7 +508,7 @@ void DotWidget::render_graph() {
     // Set scene rectangle with some padding
     scene_->setSceneRect(bbox.x1 - 10, bbox.y1 - 10, bbox.width() + 20, bbox.height() + 20);
     
-    qDebug() << "Vector-based rendering complete";
+    // qDebug() << "Vector-based rendering complete";
 }
 
 void DotWidget::render_shapes(const std::vector<std::shared_ptr<xdot::Shape>>& shapes, QPainter* painter) {
