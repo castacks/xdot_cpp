@@ -159,10 +159,10 @@ DotWidget::DotWidget(QWidget* parent)
     setRenderHint(QPainter::SmoothPixmapTransform, true);
     
     // Optimize viewport updates for vector graphics
-    setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     
-    // Enable caching for better performance
-    setCacheMode(QGraphicsView::CacheBackground);
+    // Disable caching to fix text rendering issues
+    setCacheMode(QGraphicsView::CacheNone);
     
     // Optimize transformations for smooth zooming
     setOptimizationFlag(QGraphicsView::DontSavePainterState, true);
@@ -359,15 +359,11 @@ void DotWidget::find_node(const std::string& node_id) {
 }
 
 void DotWidget::wheelEvent(QWheelEvent* event) {
-    if (event->modifiers() & Qt::ControlModifier) {
-        // Zoom with Ctrl+wheel
-        const double scale_factor = event->angleDelta().y() > 0 ? 1.15 : 0.87;
-        scale(scale_factor, scale_factor);
-        zoom_factor_ *= scale_factor;
-        event->accept();
-    } else {
-        QGraphicsView::wheelEvent(event);
-    }
+    // Zoom with scroll wheel (no Ctrl required)
+    const double scale_factor = event->angleDelta().y() > 0 ? 1.15 : 0.87;
+    scale(scale_factor, scale_factor);
+    zoom_factor_ *= scale_factor;
+    event->accept();
 }
 
 void DotWidget::mousePressEvent(QMouseEvent* event) {
