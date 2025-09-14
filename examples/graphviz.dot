@@ -1,0 +1,124 @@
+digraph G {
+	node_0 [label="?" shape=square penwidth=2 color=black style=filled fillcolor=red]
+	node_1 [label="->" shape=square penwidth=2 color=black style=filled fillcolor=red]
+	node_2 [label="?" shape=square penwidth=2 color=red]
+	node_3 [label="Disarm" shape=square penwidth=2 color=red]
+	node_4 [label="!" shape=diamond penwidth=2 color=green]
+	node_5 [label="Armed" penwidth=2 color=red]
+	node_6 [label="Disarm Commanded" penwidth=2 color=black style=filled fillcolor=red]
+	node_7 [label="->" shape=square penwidth=2 color=black style=filled fillcolor=red]
+	node_8 [label="?" shape=square penwidth=2 color=red]
+	node_9 [label="Arm" shape=square penwidth=2 color=red]
+	node_10 [label="Armed" penwidth=2 color=red]
+	node_11 [label="Arm Commanded" penwidth=2 color=black style=filled fillcolor=red]
+	node_12 [label="->" shape=square penwidth=2 color=black style=filled fillcolor=red]
+	node_13 [label="?" shape=square penwidth=2 color=red]
+	node_14 [label="Request Control" shape=square penwidth=2 color=red]
+	node_15 [label="Offboard Mode" penwidth=2 color=red]
+	node_16 [label="Offboard Commanded" penwidth=2 color=black style=filled fillcolor=red]
+	node_17 [label="->" shape=square penwidth=2 color=black style=filled fillcolor=red]
+	node_18 [label="?" shape=square penwidth=2 color=red]
+	node_19 [label="Follow Global Plan" shape=square penwidth=2 color=red]
+	node_20 [label="Global Plan Commanded" penwidth=2 color=black style=filled fillcolor=red]
+	node_21 [label="->" shape=square penwidth=2 color=black style=filled fillcolor=red]
+	node_22 [label="?" shape=square penwidth=2 color=red]
+	node_23 [label="Follow Fixed Trajectory" shape=square penwidth=2 color=red]
+	node_24 [label="Fixed Trajectory Commanded" penwidth=2 color=black style=filled fillcolor=red]
+	node_25 [label="->" shape=square penwidth=2 color=black style=filled fillcolor=red]
+	node_26 [label="?" shape=square penwidth=2 color=red]
+	node_27 [label="Rewind" shape=square penwidth=2 color=red]
+	node_28 [label="Rewind Commanded" penwidth=2 color=black style=filled fillcolor=red]
+	node_29 [label="->" shape=square penwidth=2 color=black style=filled fillcolor=red]
+	node_30 [label="?" shape=square penwidth=2 color=red]
+	node_31 [label="Pause" shape=square penwidth=2 color=red]
+	node_32 [label="Pause Commanded" penwidth=2 color=black style=filled fillcolor=red]
+	node_33 [label="->" shape=square penwidth=2 color=black style=filled fillcolor=red]
+	node_34 [label="?" shape=square penwidth=2 color=red]
+	node_35 [label="Land" shape=square penwidth=2 color=red]
+	node_36 [label="Landing Complete" penwidth=2 color=red]
+	node_37 [label="Land Commanded" penwidth=2 color=black style=filled fillcolor=red]
+	node_38 [label="->" shape=square penwidth=2 color=black style=filled fillcolor=red]
+	node_39 [label="?" shape=square penwidth=2 color=red]
+	node_40 [label="Takeoff" shape=square penwidth=2 color=red]
+	node_41 [label="Takeoff Complete" penwidth=2 color=red]
+	node_42 [label="Takeoff Commanded" penwidth=2 color=black style=filled fillcolor=red]
+	node_43 [label="->" shape=square penwidth=2 color=black style=filled fillcolor=red]
+	node_44 [label="->" shape=square penwidth=2 color=red]
+	node_45 [label="?" shape=square penwidth=2 color=red]
+	node_46 [label="Takeoff" shape=square penwidth=2 color=red]
+	node_47 [label="Takeoff Complete" penwidth=2 color=red]
+	node_48 [label="?" shape=square penwidth=2 color=red]
+	node_49 [label="Arm" shape=square penwidth=2 color=red]
+	node_50 [label="Armed" penwidth=2 color=red]
+	node_51 [label="In Air" penwidth=2 color=red]
+	node_52 [label="?" shape=square penwidth=2 color=red]
+	node_53 [label="Request Control" shape=square penwidth=2 color=red]
+	node_54 [label="Offboard Mode" penwidth=2 color=red]
+	node_55 [label="Armed" penwidth=2 color=red]
+	node_56 [label="In Air" penwidth=2 color=red]
+	node_57 [label="!" shape=diamond penwidth=2 color=red]
+	node_58 [label="State Estimate Timed Out" penwidth=2 color=green]
+	node_59 [label="Auto Takeoff Commanded" penwidth=2 color=black style=filled fillcolor=red]
+
+	ordering=out;
+
+	node_0 -> node_43;
+	node_0 -> node_38;
+	node_0 -> node_33;
+	node_0 -> node_29;
+	node_0 -> node_25;
+	node_0 -> node_21;
+	node_0 -> node_17;
+	node_0 -> node_12;
+	node_0 -> node_7;
+	node_0 -> node_1;
+	node_1 -> node_6;
+	node_1 -> node_2;
+	node_2 -> node_4;
+	node_2 -> node_3;
+	node_4 -> node_5;
+	node_7 -> node_11;
+	node_7 -> node_8;
+	node_8 -> node_10;
+	node_8 -> node_9;
+	node_12 -> node_16;
+	node_12 -> node_13;
+	node_13 -> node_15;
+	node_13 -> node_14;
+	node_17 -> node_20;
+	node_17 -> node_18;
+	node_18 -> node_19;
+	node_21 -> node_24;
+	node_21 -> node_22;
+	node_22 -> node_23;
+	node_25 -> node_28;
+	node_25 -> node_26;
+	node_26 -> node_27;
+	node_29 -> node_32;
+	node_29 -> node_30;
+	node_30 -> node_31;
+	node_33 -> node_37;
+	node_33 -> node_34;
+	node_34 -> node_36;
+	node_34 -> node_35;
+	node_38 -> node_42;
+	node_38 -> node_39;
+	node_39 -> node_41;
+	node_39 -> node_40;
+	node_43 -> node_59;
+	node_43 -> node_44;
+	node_44 -> node_57;
+	node_44 -> node_52;
+	node_44 -> node_48;
+	node_44 -> node_45;
+	node_45 -> node_47;
+	node_45 -> node_46;
+	node_48 -> node_51;
+	node_48 -> node_50;
+	node_48 -> node_49;
+	node_52 -> node_56;
+	node_52 -> node_55;
+	node_52 -> node_54;
+	node_52 -> node_53;
+	node_57 -> node_58;
+}

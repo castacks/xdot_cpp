@@ -32,6 +32,7 @@ std::vector<std::shared_ptr<Shape>> XDotAttrParser::parse() {
     pos_ = 0;
     
     while (has_more()) {
+        size_t old_pos = pos_;
         skip_whitespace();
         if (!has_more()) break;
         
@@ -57,8 +58,12 @@ std::vector<std::shared_ptr<Shape>> XDotAttrParser::parse() {
             handle_fill_color();
         } else if (code == "F") {
             handle_font();
+        } else {
+            // If we have an unknown code or empty code, advance to avoid infinite loop
+            if (pos_ == old_pos) {
+                advance();
+            }
         }
-        // Ignore unknown codes
     }
     
     return shapes_;
