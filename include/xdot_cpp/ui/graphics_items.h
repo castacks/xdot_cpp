@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../xdot/elements.h"
+#include "../xdot/graph.h"
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
@@ -9,6 +10,8 @@
 namespace xdot_cpp {
 namespace ui {
 
+class QtRenderer;
+
 class GraphicsShapeItem : public QGraphicsItem {
 public:
     explicit GraphicsShapeItem(std::shared_ptr<xdot::Shape> shape, QGraphicsItem* parent = nullptr);
@@ -16,7 +19,7 @@ public:
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
     
-    std::shared_ptr<xdot::Shape> shape() const { return shape_; }
+    std::shared_ptr<xdot::Shape> get_shape() const { return shape_; }
     
 protected:
     bool contains(const QPointF& point) const override;
@@ -38,8 +41,7 @@ public:
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
     
-    std::shared_ptr<xdot::GraphNode> node() const { return node_; }
-    
+    std::shared_ptr<xdot::GraphNode> get_node() const { return node_; }
     void set_highlighted(bool highlighted);
     bool is_highlighted() const { return highlighted_; }
     
@@ -67,8 +69,7 @@ public:
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
     
-    std::shared_ptr<xdot::GraphEdge> edge() const { return edge_; }
-    
+    std::shared_ptr<xdot::GraphEdge> get_edge() const { return edge_; }
     void set_highlighted(bool highlighted);
     bool is_highlighted() const { return highlighted_; }
     

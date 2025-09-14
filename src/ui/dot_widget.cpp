@@ -1,4 +1,5 @@
 #include "xdot_cpp/ui/dot_widget.h"
+#include "xdot_cpp/ui/graphics_items.h"
 #include "xdot_cpp/dot/parser.h"
 #include "xdot_cpp/xdot/xdot_parser.h"
 #include <QApplication>
@@ -94,6 +95,8 @@ void QtRenderer::draw_text(const xdot::Point& position, const std::string& text,
 void QtRenderer::draw_image(const xdot::Point& position, double width, double height, const std::string& path) {
     QPixmap pixmap(QString::fromStdString(path));
     if (!pixmap.isNull()) {
+        // Enable smooth transformation for high-quality image scaling
+        painter_->setRenderHint(QPainter::SmoothPixmapTransform, true);
         QRectF rect(position.x, position.y, width, height);
         painter_->drawPixmap(rect, pixmap, pixmap.rect());
     }
@@ -145,8 +148,21 @@ DotWidget::DotWidget(QWidget* parent)
     : QGraphicsView(parent), scene_(nullptr), dragging_(false), zoom_factor_(1.0) {
     setup_scene();
     setDragMode(QGraphicsView::NoDrag);
-    setRenderHint(QPainter::Antialiasing);
-    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    
+    // Enable high-quality rendering for vector graphics
+    setRenderHint(QPainter::Antialiasing, true);
+    setRenderHint(QPainter::TextAntialiasing, true);
+    setRenderHint(QPainter::SmoothPixmapTransform, true);
+    
+    // Optimize viewport updates for vector graphics
+    setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+    
+    // Enable caching for better performance
+    setCacheMode(QGraphicsView::CacheBackground);
+    
+    // Optimize transformations for smooth zooming
+    setOptimizationFlag(QGraphicsView::DontSavePainterState, true);
+    setOptimizationFlag(QGraphicsView::DontAdjustForAntialiasing, false);
 }
 
 void DotWidget::set_graph(std::shared_ptr<xdot::GraphElement> graph) {
@@ -446,7 +462,6 @@ void DotWidget::render_graph() {
     }
     
     qDebug() << "About to calculate bounding box...";
-    // Create a pixmap to render the graph
     xdot::BoundingBox bbox = graph_->bounding_box();
     qDebug() << "Bounding box calculated:" << bbox.x1 << bbox.y1 << bbox.x2 << bbox.y2;
     if (bbox.width() <= 0 || bbox.height() <= 0) {
@@ -454,41 +469,31 @@ void DotWidget::render_graph() {
         return;
     }
     
-    QPixmap pixmap(static_cast<int>(bbox.width() + 20), static_cast<int>(bbox.height() + 20));
-    pixmap.fill(Qt::white);
+    // Use vector-based rendering with QGraphicsItems instead of pixmaps
+    // This eliminates pixelation when zooming
     
-    QPainter painter(&pixmap);
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.translate(-bbox.x1 + 10, -bbox.y1 + 10);
-    
-    QtRenderer renderer(&painter);
-    
-    // Render background shapes
+    // Add background shapes as individual graphics items
     for (const auto& shape : graph_->background_shapes()) {
-        shape->draw(&renderer);
+        auto shape_item = new GraphicsShapeItem(shape);
+        scene_->addItem(shape_item);
     }
     
-    // Render edges first (so they appear behind nodes)
+    // Add edges first (so they appear behind nodes)
     for (const auto& edge : graph_->edges()) {
-        for (const auto& shape : edge->shapes()) {
-            shape->draw(&renderer);
-        }
+        auto edge_item = new GraphicsEdgeItem(edge);
+        scene_->addItem(edge_item);
     }
     
-    // Render nodes
+    // Add nodes
     for (const auto& node : graph_->nodes()) {
-        for (const auto& shape : node->shapes()) {
-            shape->draw(&renderer);
-        }
+        auto node_item = new GraphicsNodeItem(node);
+        scene_->addItem(node_item);
     }
     
-    painter.end();
-    
-    // Add pixmap to scene
-    QGraphicsPixmapItem* item = scene_->addPixmap(pixmap);
-    item->setPos(bbox.x1 - 10, bbox.y1 - 10);
-    
+    // Set scene rectangle with some padding
     scene_->setSceneRect(bbox.x1 - 10, bbox.y1 - 10, bbox.width() + 20, bbox.height() + 20);
+    
+    qDebug() << "Vector-based rendering complete";
 }
 
 void DotWidget::render_shapes(const std::vector<std::shared_ptr<xdot::Shape>>& shapes, QPainter* painter) {

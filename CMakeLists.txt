@@ -42,12 +42,14 @@ set(XDOT_LIB_HEADERS
 set(XDOT_WIDGET_SOURCES
     src/ui/dot_widget.cpp
     src/ui/dot_window.cpp
+    src/ui/graphics_items.cpp
 )
 
 # Qt widget headers
 set(XDOT_WIDGET_HEADERS
     include/xdot_cpp/ui/dot_widget.h
     include/xdot_cpp/ui/dot_window.h
+    include/xdot_cpp/ui/graphics_items.h
 )
 
 # Create the core library (without Qt dependencies)
