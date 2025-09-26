@@ -13,6 +13,7 @@
 #include <QDir>
 #include <QTextStream>
 #include <cmath>
+#include <unordered_set>
 
 namespace xdot_cpp {
 namespace ui {
@@ -167,6 +168,10 @@ DotWidget::DotWidget(QWidget* parent)
     // Optimize transformations for smooth zooming
     setOptimizationFlag(QGraphicsView::DontSavePainterState, true);
     setOptimizationFlag(QGraphicsView::DontAdjustForAntialiasing, false);
+}
+
+DotWidget::~DotWidget() {
+    clear_scene_cache();
 }
 
 void DotWidget::set_graph(std::shared_ptr<xdot::GraphElement> graph) {
@@ -458,7 +463,8 @@ void DotWidget::resizeEvent(QResizeEvent* event) {
 
 void DotWidget::update_scene() {
     if (scene_) {
-        scene_->clear();
+        // Clear the cache since scene_->clear() will remove all items
+        clear_scene_cache();
         render_graph();
     }
 }
@@ -470,45 +476,67 @@ void DotWidget::setup_scene() {
 }
 
 void DotWidget::render_graph() {
-    // qDebug() << "render_graph() called";
+    // Use optimized rendering with caching
+    render_graph_optimized();
+}
+
+void DotWidget::render_graph_optimized() {
     if (!graph_) {
-        // qDebug() << "No graph to render";
+        clear_scene_cache();
         return;
     }
-    
-    // qDebug() << "About to calculate bounding box...";
+
     xdot::BoundingBox bbox = graph_->bounding_box();
-    // qDebug() << "Bounding box calculated:" << bbox.x1 << bbox.y1 << bbox.x2 << bbox.y2;
     if (bbox.width() <= 0 || bbox.height() <= 0) {
-        // qDebug() << "Invalid bounding box, returning";
+        clear_scene_cache();
         return;
     }
-    
-    // Use vector-based rendering with QGraphicsItems instead of pixmaps
-    // This eliminates pixelation when zooming
-    
-    // Add background shapes as individual graphics items
-    for (const auto& shape : graph_->background_shapes()) {
-        auto shape_item = new GraphicsShapeItem(shape);
-        scene_->addItem(shape_item);
-    }
-    
-    // Add edges first (so they appear behind nodes)
-    for (const auto& edge : graph_->edges()) {
-        auto edge_item = new GraphicsEdgeItem(edge);
-        scene_->addItem(edge_item);
-    }
-    
-    // Add nodes
+
+    // Update background shapes
+    update_background_items(graph_->background_shapes());
+
+    // Track which cached items are still valid
+    std::unordered_set<std::string> current_nodes;
+    std::unordered_set<std::string> current_edges;
+
+    // Update/create node items
     for (const auto& node : graph_->nodes()) {
-        auto node_item = new GraphicsNodeItem(node);
-        scene_->addItem(node_item);
+        current_nodes.insert(node->id());
+        update_node_item(node->id(), node);
     }
-    
+
+    // Update/create edge items
+    for (const auto& edge : graph_->edges()) {
+        std::string edge_key = make_edge_key(edge->source(), edge->target());
+        current_edges.insert(edge_key);
+        update_edge_item(edge_key, edge);
+    }
+
+    // Remove cached items that are no longer present
+    auto node_it = cached_node_items_.begin();
+    while (node_it != cached_node_items_.end()) {
+        if (current_nodes.find(node_it->first) == current_nodes.end()) {
+            scene_->removeItem(node_it->second);
+            delete node_it->second;
+            node_it = cached_node_items_.erase(node_it);
+        } else {
+            ++node_it;
+        }
+    }
+
+    auto edge_it = cached_edge_items_.begin();
+    while (edge_it != cached_edge_items_.end()) {
+        if (current_edges.find(edge_it->first) == current_edges.end()) {
+            scene_->removeItem(edge_it->second);
+            delete edge_it->second;
+            edge_it = cached_edge_items_.erase(edge_it);
+        } else {
+            ++edge_it;
+        }
+    }
+
     // Set scene rectangle with some padding
     scene_->setSceneRect(bbox.x1 - 10, bbox.y1 - 10, bbox.width() + 20, bbox.height() + 20);
-    
-    // qDebug() << "Vector-based rendering complete";
 }
 
 void DotWidget::render_shapes(const std::vector<std::shared_ptr<xdot::Shape>>& shapes, QPainter* painter) {
@@ -572,6 +600,80 @@ QPoint DotWidget::graph_to_qt_coords(const xdot::Point& graph_point) {
     QPointF scene_point(graph_point.x, graph_point.y);
     QPoint viewport_point = mapFromScene(scene_point);
     return viewport_point;
+}
+
+void DotWidget::clear_scene_cache() {
+    // Remove all cached node items
+    for (auto& pair : cached_node_items_) {
+        scene_->removeItem(pair.second);
+        delete pair.second;
+    }
+    cached_node_items_.clear();
+
+    // Remove all cached edge items
+    for (auto& pair : cached_edge_items_) {
+        scene_->removeItem(pair.second);
+        delete pair.second;
+    }
+    cached_edge_items_.clear();
+
+    // Remove all cached background items
+    for (auto& pair : cached_background_items_) {
+        scene_->removeItem(pair.second);
+        delete pair.second;
+    }
+    cached_background_items_.clear();
+}
+
+void DotWidget::update_node_item(const std::string& node_id, std::shared_ptr<xdot::GraphNode> node) {
+    auto it = cached_node_items_.find(node_id);
+    if (it != cached_node_items_.end()) {
+        // Update existing item
+        // For now, we'll recreate the item. A more sophisticated approach
+        // would compare the node's shapes and only update if they changed.
+        scene_->removeItem(it->second);
+        delete it->second;
+    }
+
+    // Create new item
+    auto node_item = new GraphicsNodeItem(node);
+    scene_->addItem(node_item);
+    cached_node_items_[node_id] = node_item;
+}
+
+void DotWidget::update_edge_item(const std::string& edge_key, std::shared_ptr<xdot::GraphEdge> edge) {
+    auto it = cached_edge_items_.find(edge_key);
+    if (it != cached_edge_items_.end()) {
+        // Update existing item
+        scene_->removeItem(it->second);
+        delete it->second;
+    }
+
+    // Create new item
+    auto edge_item = new GraphicsEdgeItem(edge);
+    scene_->addItem(edge_item);
+    cached_edge_items_[edge_key] = edge_item;
+}
+
+void DotWidget::update_background_items(const std::vector<std::shared_ptr<xdot::Shape>>& shapes) {
+    // For simplicity, clear all background items and recreate
+    // A more sophisticated approach would compare shapes
+    for (auto& pair : cached_background_items_) {
+        scene_->removeItem(pair.second);
+        delete pair.second;
+    }
+    cached_background_items_.clear();
+
+    // Add new background shapes
+    for (const auto& shape : shapes) {
+        auto shape_item = new GraphicsShapeItem(shape);
+        scene_->addItem(shape_item);
+        cached_background_items_[shape.get()] = shape_item;
+    }
+}
+
+std::string DotWidget::make_edge_key(const std::string& source, const std::string& target) {
+    return source + "->" + target;
 }
 
 } // namespace ui

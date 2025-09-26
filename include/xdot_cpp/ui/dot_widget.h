@@ -11,6 +11,7 @@
 #include <QWheelEvent>
 #include <QKeyEvent>
 #include <memory>
+#include <unordered_map>
 
 namespace xdot_cpp {
 namespace ui {
@@ -40,6 +41,7 @@ class DotWidget : public QGraphicsView {
     
 public:
     explicit DotWidget(QWidget* parent = nullptr);
+    ~DotWidget();
     
     void set_graph(std::shared_ptr<xdot::GraphElement> graph);
     void set_dot_code(const std::string& dot_code);
@@ -83,9 +85,15 @@ private:
     
     std::shared_ptr<xdot::GraphNode> highlighted_node_;
     std::shared_ptr<xdot::GraphEdge> highlighted_edge_;
-    
+
+    // Scene item caching
+    std::unordered_map<std::string, class GraphicsNodeItem*> cached_node_items_;
+    std::unordered_map<std::string, class GraphicsEdgeItem*> cached_edge_items_;
+    std::unordered_map<void*, class GraphicsShapeItem*> cached_background_items_;
+
     void setup_scene();
     void render_graph();
+    void render_graph_optimized();
     void render_shapes(const std::vector<std::shared_ptr<xdot::Shape>>& shapes, QPainter* painter);
     
     std::shared_ptr<xdot::GraphNode> find_node_at_position(const QPoint& pos);
@@ -93,7 +101,14 @@ private:
     
     void highlight_element_at_position(const QPoint& pos);
     void clear_highlights();
-    
+
+    // Cache management
+    void clear_scene_cache();
+    void update_node_item(const std::string& node_id, std::shared_ptr<xdot::GraphNode> node);
+    void update_edge_item(const std::string& edge_key, std::shared_ptr<xdot::GraphEdge> edge);
+    void update_background_items(const std::vector<std::shared_ptr<xdot::Shape>>& shapes);
+    std::string make_edge_key(const std::string& source, const std::string& target);
+
     xdot::Point qt_to_graph_coords(const QPoint& qt_point);
     QPoint graph_to_qt_coords(const xdot::Point& graph_point);
 };
