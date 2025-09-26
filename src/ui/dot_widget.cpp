@@ -310,12 +310,13 @@ void DotWidget::set_xdot_code(const std::string& xdot_code) {
 
 void DotWidget::zoom_to_fit() {
     if (!graph_) return;
-    
+
     xdot::BoundingBox bbox = graph_->bounding_box();
     if (bbox.width() > 0 && bbox.height() > 0) {
         QRectF scene_rect(bbox.x1, bbox.y1, bbox.width(), bbox.height());
         fitInView(scene_rect, Qt::KeepAspectRatio);
         zoom_factor_ = transform().m11();
+        emit zoom_changed(zoom_factor_);
     }
 }
 
@@ -323,25 +324,31 @@ void DotWidget::zoom_in() {
     const double scale_factor = 1.25;
     scale(scale_factor, scale_factor);
     zoom_factor_ *= scale_factor;
+    emit zoom_changed(zoom_factor_);
 }
 
 void DotWidget::zoom_out() {
     const double scale_factor = 0.8;
     scale(scale_factor, scale_factor);
     zoom_factor_ *= scale_factor;
+    emit zoom_changed(zoom_factor_);
 }
 
 void DotWidget::reset_zoom() {
     resetTransform();
     zoom_factor_ = 1.0;
+    emit zoom_changed(zoom_factor_);
 }
 
-void DotWidget::set_zoom_factor(double factor) {
+void DotWidget::set_zoom_factor(double factor, bool emit_signal) {
     if (factor <= 0.0) return;
 
     resetTransform();
     scale(factor, factor);
     zoom_factor_ = factor;
+    if (emit_signal) {
+        emit zoom_changed(zoom_factor_);
+    }
 }
 
 void DotWidget::reload() {
@@ -376,6 +383,7 @@ void DotWidget::wheelEvent(QWheelEvent* event) {
     const double scale_factor = event->angleDelta().y() > 0 ? 1.15 : 0.87;
     scale(scale_factor, scale_factor);
     zoom_factor_ *= scale_factor;
+    emit zoom_changed(zoom_factor_);
     event->accept();
 }
 

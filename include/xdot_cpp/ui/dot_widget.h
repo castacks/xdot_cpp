@@ -53,7 +53,7 @@ public:
     void reset_zoom();
 
     double get_zoom_factor() const { return zoom_factor_; }
-    void set_zoom_factor(double factor);
+    void set_zoom_factor(double factor, bool emit_signal = true);
     
     void reload();
     void find_node(const std::string& node_id);
@@ -64,6 +64,7 @@ signals:
     void node_clicked(const QString& node_id, const QString& url);
     void edge_clicked(const QString& source, const QString& target, const QString& url);
     void background_clicked();
+    void zoom_changed(double zoom_factor);
     
 protected:
     void wheelEvent(QWheelEvent* event) override;
