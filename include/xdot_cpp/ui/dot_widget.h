@@ -51,6 +51,9 @@ public:
     void zoom_in();
     void zoom_out();
     void reset_zoom();
+
+    double get_zoom_factor() const { return zoom_factor_; }
+    void set_zoom_factor(double factor);
     
     void reload();
     void find_node(const std::string& node_id);

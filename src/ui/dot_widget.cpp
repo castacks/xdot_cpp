@@ -336,6 +336,14 @@ void DotWidget::reset_zoom() {
     zoom_factor_ = 1.0;
 }
 
+void DotWidget::set_zoom_factor(double factor) {
+    if (factor <= 0.0) return;
+
+    resetTransform();
+    scale(factor, factor);
+    zoom_factor_ = factor;
+}
+
 void DotWidget::reload() {
     if (!dot_code_.empty()) {
         set_dot_code(dot_code_);
